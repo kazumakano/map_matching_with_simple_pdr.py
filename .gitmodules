@@ -1,0 +1,6 @@
+[submodule "pdr"]
+	path = pdr
+	url = https://github.com/kazumakano/pdr.py.git
+[submodule "map_matching"]
+	path = map_matching
+	url = https://github.com/kazumakano/map_matching.py.git
