@@ -4,3 +4,6 @@
 [submodule "map_matching"]
 	path = map_matching
 	url = https://github.com/kazumakano/map_matching.py.git
+[submodule "particle_filter"]
+	path = particle_filter
+	url = https://github.com/kazumakano/particle_filter.py.git
