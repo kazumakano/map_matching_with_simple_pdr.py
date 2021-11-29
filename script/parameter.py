@@ -10,6 +10,11 @@ def _set_pdr_log_params(conf: dict) -> None:
 
     TS_DIFF = float(conf["ts_diff"])    # time difference of inertial sensor log to RSSI log
 
+def _set_particle_params(conf: dict) -> None:
+    global STRIDE_SD
+
+    STRIDE_SD = np.float16(conf["stride_sd"])
+
 def set_params(conf_file: Union[str, None] = None) -> dict:
     global ROOT_DIR
 
@@ -21,5 +26,6 @@ def set_params(conf_file: Union[str, None] = None) -> dict:
     set_mm_params(conf_file)
     conf = set_pdr_params(conf_file)
     _set_pdr_log_params(conf)
+    _set_particle_params(conf)
 
     return conf
