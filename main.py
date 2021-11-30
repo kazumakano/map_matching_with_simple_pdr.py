@@ -1,12 +1,10 @@
 import argparse
-import os.path as path
 from datetime import datetime, timedelta
 import numpy as np
 import map_matching.script.parameter as mm_param
 import particle_filter.script.parameter as pf_param
 import particle_filter.script.utility as pf_util
 import pdr.script.parameter as pdr_param
-import script.parameter as param
 from particle_filter.script.log import Log as PfLog
 from particle_filter.script.resample import resample
 from particle_filter.script.window import Window
@@ -37,19 +35,17 @@ def _set_main_params(conf: dict):
     ESTIM_POS_POLICY = np.int8(conf["estim_pos_policy"])       # 1: position of likeliest particle, 2: center of gravity of perticles
 
 def map_matching_with_pdr():
-    inertial_log = PfLog(BEGIN, END)
+    rssi_log = PfLog(BEGIN, END)
     if FILE_RANGE_POLICY == 1:
-        ble_log = PdrLog(file=LOG_FILE, begin=BEGIN, end=END)
+        inertial_log = PdrLog(file=LOG_FILE, begin=BEGIN, end=END)
     elif FILE_RANGE_POLICY == 2:
-        ble_log = PdrLog(file=LOG_FILE)
+        inertial_log = PdrLog(file=LOG_FILE)
     elif FILE_RANGE_POLICY == 3:
-        ble_log = PdrLog(begin=BEGIN, end=END)
+        inertial_log = PdrLog(begin=BEGIN, end=END)
 
-    map = Map(inertial_log)
-
-    # turtle = Turtle(INIT_POS, INIT_DIRECT)
-    distor = DistEstimator(ble_log.ts, ble_log.val[:, 0:3])
-    director = DirectEstimator(ble_log.ts, ble_log.val[:, 3:6])
+    map = Map(rssi_log)
+    distor = DistEstimator(inertial_log.ts, inertial_log.val[:, 0:3])
+    director = DirectEstimator(inertial_log.ts, inertial_log.val[:, 3:6])
 
     if pf_param.ENABLE_DRAW_BEACONS:
         map.draw_beacons(True)
@@ -72,7 +68,7 @@ def map_matching_with_pdr():
         print("main.py:", t.time())
 
         turtle = Turtle((0, 0), 0)
-        while(ble_log.ts[j] < t + timedelta(seconds=pf_param.WIN_STRIDE)):
+        while(inertial_log.ts[j] < t + timedelta(seconds=pf_param.WIN_STRIDE)):
             speed = pf_util.conv_from_meter_to_pixel(distor.get_win_speed(j), map.resolution)
             turtle.forward(speed * pdr_param.WIN_SIZE)
 
@@ -81,7 +77,7 @@ def map_matching_with_pdr():
 
             j += int(pdr_param.WIN_SIZE * FREQ)
 
-        win = Window(inertial_log, map, t)
+        win = Window(rssi_log, map, t)
         for i in range(PARTICLE_NUM):
             particles[i] = Particle(map, poses[i], directs[i], estim_pos)
             particles[i].random_walk(turtle.pos, turtle.heading)
@@ -102,10 +98,10 @@ def map_matching_with_pdr():
         t += timedelta(seconds=pf_param.WIN_STRIDE)
 
     print("main.py: reached end of log")
-    if pf_param.ENABLE_SAVE_VIDEO:
-        map.save_video()
     if pf_param.ENABLE_SAVE_IMG:
         map.save_img()
+    if pf_param.ENABLE_SAVE_VIDEO:
+        map.save_video()
     map.show(0)
 
 if __name__ == "__main__":
