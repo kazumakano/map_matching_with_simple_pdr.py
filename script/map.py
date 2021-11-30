@@ -1,10 +1,9 @@
-from map_matching.script.map import Map as MmMap
-import particle_filter.script.parameter as pf_param 
 import numpy as np
+import particle_filter.script.parameter as pf_param
+from map_matching.script.map import Map as MmMap
 
 
 class Map(MmMap):
-    # for PDR
     def draw_pos(self, pos: np.ndarray, is_never_cleared) -> None:
         if pf_param.ENABLE_CLEAR:
             self.clear()
