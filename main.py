@@ -11,11 +11,11 @@ from particle_filter.script.window import Window
 from pdr.script.direction_estimator import DirectEstimator
 from pdr.script.distance_estimator import DistEstimator
 from pdr.script.log import FREQ
-from pdr.script.turtle import Turtle
 from script.map import Map
 from script.parameter import set_params
 from script.particle import Particle
 from script.pdr_log import PdrLog
+from script.turtle import TURN_STATE, Turtle
 
 
 def _set_main_params(conf: dict):
@@ -44,6 +44,7 @@ def map_matching_with_pdr():
         inertial_log = PdrLog(begin=BEGIN, end=END)
 
     map = Map(rssi_log)
+    turtle = Turtle(INIT_POS, INIT_DIRECT)
     distor = DistEstimator(inertial_log.ts, inertial_log.val[:, 0:3])
     director = DirectEstimator(inertial_log.ts, inertial_log.val[:, 3:6])
 
@@ -67,7 +68,7 @@ def map_matching_with_pdr():
     while t <= END:
         print("main.py:", t.time())
 
-        turtle = Turtle((0, 0), 0)
+        last_turtle_pos, last_turtle_heading = turtle.copy()
         while(inertial_log.ts[j] < t + timedelta(seconds=pf_param.WIN_STRIDE)):
             speed = pf_util.conv_from_meter_to_pixel(distor.get_win_speed(j), map.resolution)
             turtle.forward(speed * pdr_param.WIN_SIZE)
@@ -75,13 +76,16 @@ def map_matching_with_pdr():
             angular_vel = director.get_win_angular_vel(j)
             turtle.right((angular_vel - director.sign * pdr_param.DRIFT) * pdr_param.WIN_SIZE)
 
+            map.draw_pos(turtle.pos, True)
+            map.show()
+
             j += int(pdr_param.WIN_SIZE * FREQ)
 
         win = Window(rssi_log, map, t)
         for i in range(PARTICLE_NUM):
             particles[i] = Particle(map, poses[i], directs[i], estim_pos)
-            particles[i].random_walk(turtle.pos, turtle.heading)
-            particles[i].set_likelihood(map, win, estim_pos)
+            particles[i].random_walk(turtle.pos - last_turtle_pos, turtle.heading - last_turtle_heading)
+            particles[i].set_likelihood(map, win, estim_pos, turtle.status == TURN_STATE)
 
         poses, directs = resample(particles)
 

@@ -5,15 +5,26 @@ from map_matching.script.parameter import set_params as set_mm_params
 from pdr.script.parameter import set_params as set_pdr_params
 
 
-def _set_pdr_log_params(conf: dict) -> None:
-    global TS_DIFF
+def _set_map_params(conf: dict) -> None:
+    global MIN_CORNER_ANGLE, ENABLE_DRAW_CORNERS
 
-    TS_DIFF = float(conf["ts_diff"])    # time difference of inertial sensor log to RSSI log
+    MIN_CORNER_ANGLE = np.float16(conf["min_corner_angle"])
+    ENABLE_DRAW_CORNERS = bool(conf["enable_draw_corners"])
 
 def _set_particle_params(conf: dict) -> None:
     global STRIDE_SD
 
     STRIDE_SD = np.float16(conf["stride_sd"])
+
+def _set_pdr_log_params(conf: dict) -> None:
+    global TS_DIFF
+
+    TS_DIFF = float(conf["ts_diff"])    # time difference of inertial sensor log to RSSI log
+
+def _set_turtle_params(conf: dict) -> None:
+    global MAX_HEADING_HIST_LEN
+
+    MAX_HEADING_HIST_LEN = np.uint8(conf["max_turtle_heading_hist_len"])
 
 def set_params(conf_file: Union[str, None] = None) -> dict:
     global ROOT_DIR
@@ -25,7 +36,9 @@ def set_params(conf_file: Union[str, None] = None) -> dict:
 
     set_mm_params(conf_file)
     conf = set_pdr_params(conf_file)
-    _set_pdr_log_params(conf)
+    _set_map_params(conf)
     _set_particle_params(conf)
+    _set_pdr_log_params(conf)
+    _set_turtle_params(conf)
 
     return conf
