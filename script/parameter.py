@@ -12,9 +12,11 @@ def _set_map_params(conf: dict) -> None:
     ENABLE_DRAW_CORNERS = bool(conf["enable_draw_corners"])
 
 def _set_particle_params(conf: dict) -> None:
-    global STRIDE_SD
+    global ENABLE_PDR_WALK, STRIDE_SD, ENABLE_CORNER_WEIGHT
 
+    ENABLE_PDR_WALK = bool(conf["enable_pdr_walk"])
     STRIDE_SD = np.float16(conf["stride_sd"])
+    ENABLE_CORNER_WEIGHT = bool(conf["enable_corner_weight"])
 
 def _set_pdr_log_params(conf: dict) -> None:
     global TS_DIFF

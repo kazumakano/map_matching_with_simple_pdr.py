@@ -9,12 +9,15 @@ import particle_filter.script.utility as pf_util
 
 class Particle(MmParticle):
     def random_walk(self, vec: np.ndarray, angle: np.float64) -> None:
-        self.walk(np.linalg.norm(vec) + np.random.normal(scale=param.STRIDE_SD), angle + np.random.normal(scale=pf_param.DIRECT_SD))
+        if param.ENABLE_PDR_WALK:
+            self.walk(np.linalg.norm(vec) + np.random.normal(scale=param.STRIDE_SD), angle + np.random.normal(scale=pf_param.DIRECT_SD))
+        else:
+            super().random_walk()
 
     def set_likelihood(self, map: Map, win: Window, last_pos: np.ndarray, is_on_corner: bool) -> None:
         super().set_likelihood(map, win, last_pos)
 
-        if not pf_param.IS_LOST:
+        if param.ENABLE_CORNER_WEIGHT and not pf_param.IS_LOST:
             if is_on_corner:    # if turtle is turning
                 max_corner_weight = 0
                 for i in map.corners:
