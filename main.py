@@ -1,4 +1,3 @@
-import argparse
 from datetime import datetime, timedelta
 import numpy as np
 import map_matching.script.parameter as mm_param
@@ -12,7 +11,6 @@ from pdr.script.direction_estimator import DirectEstimator
 from pdr.script.distance_estimator import DistEstimator
 from pdr.script.log import FREQ
 from script.map import Map
-from script.parameter import set_params
 from script.particle import Particle
 from script.pdr_log import PdrLog
 from script.turtle import TURN_STATE, Turtle
@@ -76,10 +74,13 @@ def map_matching_with_pdr():
             angular_vel = director.get_win_angular_vel(j)
             turtle.right((angular_vel - director.sign * pdr_param.DRIFT) * pdr_param.WIN_SIZE)
 
-            map.draw_pos(turtle.pos, True)
-            map.show()
+            # map.draw_pos(turtle.pos, True)
+            # map.show()
 
             j += int(pdr_param.WIN_SIZE * FREQ)
+        
+        if turtle.status == TURN_STATE:
+            print("main.py: turtle is turning")
 
         win = Window(rssi_log, map, t)
         for i in range(PARTICLE_NUM):
@@ -109,6 +110,9 @@ def map_matching_with_pdr():
     map.show(0)
 
 if __name__ == "__main__":
+    import argparse
+    from script.parameter import set_params
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config", help="specify your config file", metavar="PATH_TO_CONFIG_FILE")
 

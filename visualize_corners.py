@@ -1,5 +1,3 @@
-from script.parameter import set_params
-import argparse
 import particle_filter.script.parameter as pf_param
 import map_matching.script.parameter as mm_param
 import script.parameter as param
@@ -21,6 +19,9 @@ def vis_map() -> None:
     map.show(0)
 
 if __name__ == "__main__":
+    import argparse
+    from script.parameter import set_params
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--config", help="specify your config file", metavar="PATH_TO_CONFIG_FILE")
     parser.add_argument("--corner", action="store_true", help="enable draw corners")
