@@ -1,9 +1,10 @@
-import particle_filter.script.parameter as pf_param
-import map_matching.script.parameter as mm_param
-import script.parameter as param
-from script.map import Map
-from particle_filter.script.log import Log
 from datetime import datetime
+import map_matching.script.parameter as mm_param
+import particle_filter.script.parameter as pf_param
+import script.parameter as param
+from particle_filter.script.log import Log
+from script.map import Map
+
 
 def vis_map() -> None:
     map = Map(Log(datetime(2000, 1, 1), datetime(2000, 1, 1)))    # whenever is fine
