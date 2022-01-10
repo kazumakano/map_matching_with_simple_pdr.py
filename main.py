@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from typing import Any
 import numpy as np
 import map_matching.script.parameter as mm_param
 import particle_filter.script.parameter as pf_param
@@ -16,7 +17,7 @@ from script.pdr_log import PdrLog
 from script.turtle import TURN_STATE, Turtle
 
 
-def _set_main_params(conf: dict):
+def _set_main_params(conf: dict[str, Any]):
     global BEGIN, END, FILE_RANGE_POLICY, LOG_FILE, PARTICLE_NUM, INIT_POS, INIT_POS_SD, INIT_DIRECT, INIT_DIRECT_SD, ESTIM_POS_POLICY
 
     BEGIN = datetime.strptime(conf["begin"], "%Y-%m-%d %H:%M:%S")
