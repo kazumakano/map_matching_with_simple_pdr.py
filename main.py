@@ -1,3 +1,4 @@
+import os.path as path
 from datetime import datetime, timedelta
 from typing import Any
 import numpy as np
@@ -32,8 +33,8 @@ def _set_main_params(conf: dict[str, Any]):
     PARTICLE_NUM = np.int16(conf["particle_num"])
 
 def map_matching_with_pdr():
-    rssi_log = PfLog(BEGIN, END, RSSI_LOG_FILE)
-    inertial_log = PdrLog(BEGIN, END, INERTIAL_LOG_FILE)
+    rssi_log = PfLog(BEGIN, END, path.join(pf_param.ROOT_DIR, "log/observed/", RSSI_LOG_FILE))
+    inertial_log = PdrLog(BEGIN, END, path.join(pdr_param.ROOT_DIR, "log/", INERTIAL_LOG_FILE))
     map = Map(rssi_log.mac_list)
     turtle = Turtle(INIT_POS, INIT_DIRECT)
     distor = DistEstimator(inertial_log.val[:, 0:3], inertial_log.ts)
@@ -64,10 +65,10 @@ def map_matching_with_pdr():
 
         last_turtle_pos, last_turtle_heading = turtle.copy()
         while(inertial_log.ts[i] < t + timedelta(seconds=pf_param.WIN_STRIDE)):
-            speed = pf_util.conv_from_meter_to_pixel(distor.get_win_speed(i), map.resolution)
+            speed = pf_util.conv_from_meter_to_pixel(distor.get_win_speed(i, pdr_win_len), map.resolution)
             turtle.forward(speed * pdr_param.WIN_STRIDE)
 
-            angular_vel = director.get_win_angular_vel(i)
+            angular_vel = director.get_win_angular_vel(i, pdr_win_len)
             turtle.right((angular_vel - director.sign * pdr_param.DRIFT) * pdr_param.WIN_STRIDE)
 
             # map.draw_pos(turtle.pos, True)
