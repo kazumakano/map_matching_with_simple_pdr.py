@@ -35,7 +35,7 @@ class Map(MmMap):
         for i in self.corners:
             self._draw_pos((128, 128, 128), is_never_cleared, self.node_poses[i])
 
-    def draw_pos(self, pos: np.ndarray) -> None:
+    def draw_pos(self, pos: np.ndarray, is_never_cleared: bool = False) -> None:
         if pf_param.ENABLE_CLEAR:
             self.clear()
-        self._draw_pos((0, 255, 0), False, pos)
+        self._draw_pos((0, 255, 0), is_never_cleared, pos)
