@@ -6,7 +6,7 @@ You can customize following parameters:
 | Key                  | Description                                     | Notes | Type          |
 | ---                  | ---                                             | ---   | ---           |
 | enable_draw_corners  | draw corners or not                             |       | `bool`        |
-| min_corner_angle     | minimum angle to recognize as turning           |       | `float`       |
+| min_corner_angle     | minimum angle to recognize as corner            |       | `float`       |
 |                      |                                                 |       |               |
 | enable_corner_weight | weighten around corner when turning or not      |       | `bool`        |
 | enable_pdr_walk      | change policy of walk from random to PDR or not |       | `bool`        |
