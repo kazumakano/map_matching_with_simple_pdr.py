@@ -1,5 +1,4 @@
 import copy
-from typing import Tuple
 import numpy as np
 from pdr.script.turtle import Turtle as PdrTurtle
 from . import parameter as param
@@ -27,5 +26,5 @@ class Turtle(PdrTurtle):
         else:
             self.status = STRAIGHT_STATE
 
-    def copy(self) -> Tuple[np.ndarray, np.float64]:
+    def copy(self) -> tuple[np.ndarray, np.float64]:
         return copy.deepcopy(self.pos), copy.deepcopy(self.heading)
