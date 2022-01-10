@@ -3,7 +3,6 @@ import particle_filter.script.parameter as pf_param
 from map_matching.script.particle import Particle as MmParticle
 from . import parameter as param
 from .map import Map
-from particle_filter.script.window import Window
 import particle_filter.script.utility as pf_util
 
 
