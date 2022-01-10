@@ -8,20 +8,20 @@ import particle_filter.script.utility as pf_util
 
 
 class Particle(MmParticle):
-    def random_walk(self, vec: np.ndarray, angle: np.float64) -> None:
+    def walk(self, angle: np.float64, vec: np.ndarray) -> None:
         if param.ENABLE_PDR_WALK:
-            self.walk(np.linalg.norm(vec) + np.random.normal(scale=param.STRIDE_SD), angle + np.random.normal(scale=pf_param.DIRECT_SD))
+            self._walk(angle + np.random.normal(scale=pf_param.DIRECT_SD), np.linalg.norm(vec) + np.random.normal(scale=param.STRIDE_SD))
         else:
             super().random_walk()
 
-    def set_likelihood(self, map: Map, win: Window, last_pos: np.ndarray, is_on_corner: bool) -> None:
-        super().set_likelihood(map, win, last_pos)
+    def set_likelihood(self, is_on_corner: bool, last_pos: np.ndarray, map: Map, strength_weight_list: np.ndarray, subject_dist_list: np.ndarray) -> None:
+        super().set_likelihood(last_pos, map, strength_weight_list, subject_dist_list)
 
-        if param.ENABLE_CORNER_WEIGHT and not pf_param.IS_LOST:
+        if not pf_param.IS_LOST and param.ENABLE_CORNER_WEIGHT:
             if is_on_corner:    # if turtle is turning
                 max_corner_weight = 0
                 for i in map.corners:
-                    corner_weight = pf_util.calc_prob_weight(pf_util.calc_dist_by_pos(self.pos, map.node_poses[i]), 0)
+                    corner_weight = pf_util.calc_prob_weight(pf_util.calc_dist_by_pos(map.node_poses[i], self.pos), 0)
                     if corner_weight > max_corner_weight:
                         max_corner_weight = corner_weight
 
