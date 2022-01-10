@@ -1,78 +1,80 @@
-# log
-ts_diff: 0
+# particle filter
+begin: "2000-01-01 00:00:00"
+end: "2000-01-01 23:59:59"
+init_direct: 0
+init_direct_sd: 45
+init_pos: [0, 0]
+init_pos_sd: 16
+particle_num: 256
 
-# map
-min_corner_angle: 80
-enable_draw_corners: True
+win_size: 2
 
-# particle
-stride_sd: 30
+enable_clear_map: True
+enable_draw_beacons: False
+enable_save_img: False
+enable_save_video: False
+frame_rate: 1
+map_conf_file: sample.yaml
+map_img_file: sample.pgm
+map_show_policy: 1
+result_file_name:
+win_stride: 1
 
-# turtle
-max_turtle_heading_hist_len: 10
+direct_sd: 4.5
+max_particle_stride: 32
+
+lost_resample_policy: 1
+
+enable_truth: False
+
+dist_sd: 64
+el_correction: 2
+neg_weight_coef: 0
+propag_coef: 4
+
+win_policy: 1
 
 # map matching
-begin: "2021-11-26 14:38:05"
-end: "2021-11-26 14:47:06"
-
-enable_draw_nodes: False
 enable_draw_links: False
+enable_draw_nodes: False
 max_link_len: 80
+nodes_show_policy: 1
 set_links_policy: 3
-nodes_show_policy: 2
 
-particle_num: 256
-init_pos: [1150, 955]
-init_pos_sd: 16
-init_direct: 270
-init_direct_sd: 45
+match_weight_policy: 1
 rand_pos_range: 512
-match_weight_policy: 3
+
 estim_pos_policy: 1
 
-# pdr
-file_range_policy: 1
-log_file: 2021-11-26_.pkl
+# simple PDR
+gyro_drift: 0
+rotate_ax: 3
 
-pdr_win_size: 0.1
-
-step_len_coef: 0.42
-stature: 1.7
 default_speed: 1
-
+max_status_interval: 0.5
+min_step_interval: 0.5
+stature: 1.7
+step_len_coef: 0.42
 step_begin_acc_thresh: 1.05
 pos_peak_acc_thresh: 1.11
 neg_peak_acc_thresh: 0.93
 step_end_acc_thresh: 0.97
-min_step_interval: 0.5
-max_status_interval: 0.5
-max_step_interval: 2
 
-rotate_ax: 4
-gyro_drift: 0
+freq: 100
+pdr_win_stride: 0.1
 
-# particle filter
-enable_truth: False
+# map matching with simple PDR
+inertial_log_file: sample_inertial.csv
+rssi_log_file: sample_ble.csv
 
-map_img_file: ptokai3.pgm
-map_conf_file: ptokai3.yaml
-enable_draw_beacons: False
-enable_clear_map: True
-map_show_policy: 3
+enable_draw_corners: False
+min_corner_angle: 80
 
-enable_save_video: False
-enable_save_img: False
-file_name:
-frame_rate: 1
+enable_corner_weight: False
+enable_pdr_walk: False
+stride_sd: 30
 
-win_stride: 1
-win_size: 4
-win_policy: 1
+max_heading_hist_len: 10
 
-direct_sd: 30
-max_particle_stride: 32
-lost_resample_policy: 1
-
-propag_coef: 4
-el_correction: 2
-dist_sd: 64
+# tentation
+log_file: "sample.csv"
