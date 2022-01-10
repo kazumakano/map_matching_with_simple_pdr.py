@@ -20,6 +20,6 @@ You can customize following parameters:
 |                      |                                                   |                                    |               |
 | enable_corner_weight | weighten around corner when turning or not        |                                    | `bool`        |
 | enable_pdr_walk      | change policy of walk from random to PDR or not   |                                    | `bool`        |
-| stride_sd            | standard deviation of stride at walk              |                                    | `float`       |
+| stride_sd            | standard deviation of stride at PDR walk          |                                    | `float`       |
 |                      |                                                   |                                    |               |
 | max_heading_hist_len | maximum length of history of turtle's heading     |                                    | `int`         |
