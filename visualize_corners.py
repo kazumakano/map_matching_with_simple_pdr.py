@@ -1,4 +1,6 @@
+import os.path as path
 from datetime import datetime
+from glob import glob
 import map_matching.script.parameter as mm_param
 import particle_filter.script.parameter as pf_param
 import script.parameter as param
@@ -7,7 +9,7 @@ from script.map import Map
 
 
 def vis_map() -> None:
-    map = Map(Log(datetime(2000, 1, 1), datetime(2000, 1, 1)))    # whenever is fine
+    map = Map(Log(datetime(2000, 1, 1), datetime(2000, 1, 1), glob(path.join(pf_param.ROOT_DIR, "log/observed/*.csv"))[0]).mac_list)
     if param.ENABLE_DRAW_CORNERS:
         map.draw_corners()
     if mm_param.ENABLE_DRAW_NODES:
@@ -24,7 +26,7 @@ if __name__ == "__main__":
     from script.parameter import set_params
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--config", help="specify your config file", metavar="PATH_TO_CONFIG_FILE")
+    parser.add_argument("-c", "--conf_file", help="specify config file", metavar="PATH_TO_CONF_FILE")
     parser.add_argument("--corner", action="store_true", help="enable draw corners")
     parser.add_argument("-n", "--node", action="store_true", help="enable draw nodes")
     parser.add_argument("-l", "--link", action="store_true", help="enable draw links")
@@ -32,9 +34,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if (not args.corner) and (not args.node) and (not args.link):
-        raise Warning("visualize_nodes_and_links.py: set flags in order to visualize")
+        raise Warning("visualize_corners.py: set flags in order to visualize")
 
-    set_params(args.config)
+    set_params(args.conf_file)
     param.ENABLE_DRAW_CORNERS = args.corner
     mm_param.ENABLE_DRAW_NODES = args.node
     mm_param.ENABLE_DRAW_LINKS = args.link
