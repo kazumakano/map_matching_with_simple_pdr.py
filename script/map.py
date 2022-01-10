@@ -2,14 +2,13 @@ from itertools import combinations
 import numpy as np
 import particle_filter.script.parameter as pf_param
 from map_matching.script.map import Map as MmMap
-from particle_filter.script.log import Log
 from . import parameter as param
 from . import utility as util
 
 
 class Map(MmMap):
-    def __init__(self, log: Log) -> None:
-        super().__init__(log)
+    def __init__(self, mac_list: np.ndarray) -> None:
+        super().__init__(mac_list)
 
         self._set_corners()
 
@@ -22,10 +21,10 @@ class Map(MmMap):
         return is_corner
 
     def _set_corners(self) -> None:
-        self.corners = np.empty(0, dtype=np.uint16)
+        self.corners = np.empty(0, dtype=np.int16)
         for i in range(len(self.node_poses)):
             if self._is_corner(i):
-                self.corners = np.hstack((self.corners, np.uint16(i)))
+                self.corners = np.hstack((self.corners, np.int16(i)))
         
         print(f"map.py: {len(self.corners)} corners found")
 
@@ -34,9 +33,9 @@ class Map(MmMap):
             raise Warning("map.py: drawing corners is not enabled but draw_corners() was called")
 
         for i in self.corners:
-            self._draw_any_pos(self.node_poses[i], (128, 128, 128), is_never_cleared)
+            self._draw_pos((128, 128, 128), is_never_cleared, self.node_poses[i])
 
-    def draw_pos(self, pos: np.ndarray, is_never_cleared: bool = False) -> None:
+    def draw_pos(self, pos: np.ndarray) -> None:
         if pf_param.ENABLE_CLEAR:
             self.clear()
-        self._draw_any_pos(pos, (0, 255, 0), is_never_cleared)
+        self._draw_pos((0, 255, 0), False, pos)
