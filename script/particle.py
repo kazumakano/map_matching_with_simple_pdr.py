@@ -21,7 +21,4 @@ class Particle(MmParticle):
                 self.likelihood += max_corner_weight
 
     def walk(self, angle: np.float64, vec: np.ndarray) -> None:
-        if param.ENABLE_PDR_WALK:
-            self._walk(angle + np.random.normal(scale=pf_param.DIRECT_SD), np.linalg.norm(vec) + np.random.normal(scale=param.STRIDE_SD))
-        else:
-            super().random_walk()
+        self._walk(angle + np.random.normal(scale=pf_param.DIRECT_SD), np.linalg.norm(vec) + np.random.normal(scale=param.STRIDE_SD)) if param.ENABLE_PDR_WALK else super().random_walk()

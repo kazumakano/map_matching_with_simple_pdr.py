@@ -21,10 +21,7 @@ class Turtle(PdrTurtle):
         if len(self.heading_hist) == param.MAX_HEADING_HIST_LEN:
             self.heading_hist = np.delete(self.heading_hist, 0)
 
-        if self.heading_hist.var() > 100:
-            self.status = TURN_STATE
-        else:
-            self.status = STRAIGHT_STATE
+        self.status = TURN_STATE if self.heading_hist.var() > 100 else STRAIGHT_STATE
 
     def copy(self) -> tuple[np.ndarray, np.float64]:
         return copy.deepcopy(self.pos), copy.deepcopy(self.heading)
