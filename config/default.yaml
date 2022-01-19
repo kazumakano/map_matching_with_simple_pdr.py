@@ -22,13 +22,15 @@ win_stride: 1
 
 direct_sd: 4.5
 max_particle_stride: 32
+rand_pos_range: 512
 
 lost_resample_policy: 1
 
-enable_truth: False
+truth_log_file:
 
 dist_sd: 64
 el_correction: 2
+estim_pos_policy: 1
 neg_weight_coef: 0
 propag_coef: 4
 
@@ -42,9 +44,6 @@ nodes_show_policy: 1
 set_links_policy: 3
 
 match_weight_policy: 1
-rand_pos_range: 512
-
-estim_pos_policy: 1
 
 # simple PDR
 gyro_drift: 0
