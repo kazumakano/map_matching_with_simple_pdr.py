@@ -6,6 +6,7 @@ init_direct_sd: 45
 init_pos: [0, 0]
 init_pos_sd: 16
 particle_num: 256
+result_file_name:
 
 win_size: 2
 
@@ -17,7 +18,6 @@ frame_rate: 1
 map_conf_file: sample.yaml
 map_img_file: sample.pgm
 map_show_policy: 1
-result_file_name:
 win_stride: 1
 
 direct_sd: 4.5

@@ -7,8 +7,8 @@ from . import utility as util
 
 
 class Map(MmMap):
-    def __init__(self, mac_list: np.ndarray) -> None:
-        super().__init__(mac_list)
+    def __init__(self, mac_list: np.ndarray, result_file_name: str) -> None:
+        super().__init__(mac_list, result_file_name)
 
         self._set_corners()
 

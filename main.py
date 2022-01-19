@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from typing import Any
 import numpy as np
 import map_matching.script.parameter as mm_param
-import map_matching.script.utility as mm_util
 import particle_filter.script.parameter as pf_param
 import particle_filter.script.utility as pf_util
 import pdr.script.parameter as pdr_param
@@ -20,7 +19,7 @@ from script.turtle import TURN_STATE, Turtle
 
 
 def _set_main_params(conf: dict[str, Any]):
-    global BEGIN, END, INERTIAL_LOG_FILE, RSSI_LOG_FILE, INIT_DIRECT, INIT_DIRECT_SD, INIT_POS, INIT_POS_SD, PARTICLE_NUM
+    global BEGIN, END, INERTIAL_LOG_FILE, RSSI_LOG_FILE, INIT_DIRECT, INIT_DIRECT_SD, INIT_POS, INIT_POS_SD, PARTICLE_NUM, RESULT_FILE_NAME
 
     BEGIN = datetime.strptime(conf["begin"], "%Y-%m-%d %H:%M:%S")
     END = datetime.strptime(conf["end"], "%Y-%m-%d %H:%M:%S")
@@ -31,11 +30,12 @@ def _set_main_params(conf: dict[str, Any]):
     INIT_POS = np.array(conf["init_pos"], dtype=np.float16)
     INIT_POS_SD = np.float16(conf["init_pos_sd"])
     PARTICLE_NUM = np.int16(conf["particle_num"])
+    RESULT_FILE_NAME = pf_util.gen_file_name() if conf["result_file_name"] is None else str(conf["result_file_name"])
 
 def map_matching_with_pdr():
     rssi_log = PfLog(BEGIN, END, path.join(pf_param.ROOT_DIR, "log/observed/", RSSI_LOG_FILE))
     inertial_log = PdrLog(BEGIN, END, path.join(pdr_param.ROOT_DIR, "log/", INERTIAL_LOG_FILE))
-    map = Map(rssi_log.mac_list)
+    map = Map(rssi_log.mac_list, RESULT_FILE_NAME)
     turtle = Turtle(INIT_POS, INIT_DIRECT)
     distor = DistEstimator(inertial_log.val[:, 0:3], inertial_log.ts)
     director = DirectEstimator(inertial_log.val[:, 3:6], inertial_log.ts)
@@ -85,9 +85,9 @@ def map_matching_with_pdr():
         poses, directs = resample(particles)
 
         if not pf_param.IS_LOST:
-            map.draw_particles(estim_pos, particles)
+            estim_pos = pf_util.estim_pos(particles)
+            map.draw_particles(particles)
             map.show()
-            estim_pos = mm_util.estim_pos(particles)
         if pf_param.ENABLE_SAVE_VIDEO:
             map.record()
 

@@ -8,8 +8,8 @@ from particle_filter.script.log import Log
 from script.map import Map
 
 
-def vis_map() -> None:
-    map = Map(Log(datetime(2000, 1, 1), datetime(2000, 1, 1), glob(path.join(pf_param.ROOT_DIR, "log/observed/*.csv"))[0]).mac_list)
+def vis_map(result_file_name: str) -> None:
+    map = Map(Log(datetime(2000, 1, 1), datetime(2000, 1, 1), glob(path.join(pf_param.ROOT_DIR, "log/observed/*.csv"))[0]).mac_list, result_file_name)
     if param.ENABLE_DRAW_CORNERS:
         map.draw_corners()
     if mm_param.ENABLE_DRAW_NODES:
@@ -23,6 +23,7 @@ def vis_map() -> None:
 
 if __name__ == "__main__":
     import argparse
+    import particle_filter.script.utility as pf_util
     from script.parameter import set_params
 
     parser = argparse.ArgumentParser()
@@ -36,10 +37,10 @@ if __name__ == "__main__":
     if (not args.corner) and (not args.node) and (not args.link):
         raise Warning("visualize_corners.py: set flags in order to visualize")
 
-    set_params(args.conf_file)
+    conf = set_params(args.conf_file)
     param.ENABLE_DRAW_CORNERS = args.corner
     mm_param.ENABLE_DRAW_NODES = args.node
     mm_param.ENABLE_DRAW_LINKS = args.link
     pf_param.ENABLE_SAVE_IMG = args.save
 
-    vis_map()
+    vis_map(pf_util.gen_file_name() if conf["result_file_name"] is None else str(conf["result_file_name"]))
