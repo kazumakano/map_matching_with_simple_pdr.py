@@ -86,7 +86,7 @@ def map_matching_with_pdr():
 
         if not pf_param.IS_LOST:
             estim_pos = pf_util.estim_pos(particles)
-            map.draw_particles(particles)
+            map.draw_particles(estim_pos, particles)
             map.show()
         if pf_param.ENABLE_SAVE_VIDEO:
             map.record()
