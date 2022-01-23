@@ -34,7 +34,7 @@ def _set_main_params(conf: dict[str, Any]):
     RESULT_DIR_NAME = None if conf["result_dir_name"] is None else str(conf["result_dir_name"])
 
 def map_matching_with_pdr(conf: dict[str, Any]):
-    inertial_log = PdrLog(BEGIN, END, path.join(pdr_param.ROOT_DIR, "log/", INERTIAL_LOG_FILE))
+    inertial_log = PdrLog(BEGIN - timedelta(seconds=pf_param.WIN_STRIDE - pdr_param.WIN_STRIDE), END + timedelta(seconds=1 / pdr_param.FREQ), path.join(pdr_param.ROOT_DIR, "log/", INERTIAL_LOG_FILE))
     director = DirectEstimator(inertial_log.val[:, 3:6], inertial_log.ts)
     distor = DistEstimator(inertial_log.val[:, 0:3], inertial_log.ts)
     rssi_log = PfLog(BEGIN, END, path.join(pf_param.ROOT_DIR, "log/observed/", RSSI_LOG_FILE))
@@ -68,7 +68,7 @@ def map_matching_with_pdr(conf: dict[str, Any]):
         print("main.py:", t.time())
 
         last_turtle_pos, last_turtle_heading = turtle.copy()
-        while(inertial_log.ts[i] < t + timedelta(seconds=pf_param.WIN_STRIDE)):
+        while(i < len(inertial_log.ts) and inertial_log.ts[i] < t + timedelta(seconds=1 / pdr_param.FREQ)):
             speed = pf_util.conv_from_meter_to_pixel(distor.get_win_speed(i, pdr_win_len), map.resolution)
             turtle.forward(speed * pdr_param.WIN_STRIDE)
 
