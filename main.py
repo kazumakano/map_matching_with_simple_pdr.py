@@ -82,7 +82,7 @@ def map_matching_with_pdr(conf: dict[str, Any]):
 
         win = Window(t, rssi_log, map.resolution)
         for j in range(PARTICLE_NUM):
-            particles[j] = Particle(map.img.shape[:2], estim_pos, poses[j], directs[j])
+            particles[j] = Particle(map.img, estim_pos, poses[j], directs[j])
             particles[j].walk(turtle.heading - last_turtle_heading, turtle.pos - last_turtle_pos)
             particles[j].set_likelihood(turtle.status == TURN_STATE, estim_pos, map, win.strength_weight_list, win.subject_dist_list)
 
