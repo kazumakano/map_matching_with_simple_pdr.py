@@ -1,6 +1,7 @@
 import os.path as path
 from datetime import datetime
 from glob import glob
+from typing import Union
 import map_matching.script.parameter as mm_param
 import particle_filter.script.parameter as pf_param
 import script.parameter as param
@@ -8,8 +9,8 @@ from particle_filter.script.log import Log
 from script.map import Map
 
 
-def vis_map(result_file_name: str) -> None:
-    map = Map(Log(datetime(2000, 1, 1), datetime(2000, 1, 1), glob(path.join(pf_param.ROOT_DIR, "log/observed/*.csv"))[0]).mac_list, result_file_name)
+def vis_map(result_dir: Union[str, None]) -> None:
+    map = Map(Log(datetime(2000, 1, 1), datetime(2000, 1, 1), glob(path.join(pf_param.ROOT_DIR, "log/observed/*.csv"))[0]).mac_list, result_dir)
     if param.ENABLE_DRAW_CORNERS:
         map.draw_corners()
     if mm_param.ENABLE_DRAW_NODES:
@@ -43,4 +44,4 @@ if __name__ == "__main__":
     mm_param.ENABLE_DRAW_LINKS = args.link
     pf_param.ENABLE_SAVE_IMG = args.save
 
-    vis_map(pf_util.gen_file_name() if conf["result_file_name"] is None else str(conf["result_file_name"]))
+    vis_map(pf_util.make_result_dir(None if conf["result_dir_name"] is None else str(conf["result_dir_name"])))

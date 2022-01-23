@@ -1,4 +1,5 @@
 from itertools import combinations
+from typing import Union
 import numpy as np
 import particle_filter.script.parameter as pf_param
 from map_matching.script.map import Map as MmMap
@@ -7,8 +8,8 @@ from . import utility as util
 
 
 class Map(MmMap):
-    def __init__(self, mac_list: np.ndarray, result_file_name: str) -> None:
-        super().__init__(mac_list, result_file_name)
+    def __init__(self, mac_list: np.ndarray, result_dir: Union[str, None]) -> None:
+        super().__init__(mac_list, result_dir)
 
         self._set_corners()
 
