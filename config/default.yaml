@@ -76,4 +76,4 @@ stride_sd: 30
 max_heading_hist_len: 10
 
 # tentation
-log_file: "sample.csv"
+log_file: sample.csv
