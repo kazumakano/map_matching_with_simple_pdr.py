@@ -20,7 +20,7 @@ from script.turtle import TURN_STATE, Turtle
 
 
 def _set_main_params(conf: dict[str, Any]):
-    global BEGIN, END, INERTIAL_LOG_FILE, RSSI_LOG_FILE, INIT_DIRECT, INIT_DIRECT_SD, INIT_POS, INIT_POS_SD, PARTICLE_NUM, RESULT_DIR_NAME
+    global BEGIN, END, INERTIAL_LOG_FILE, RSSI_LOG_FILE, INIT_DIRECT, INIT_DIRECT_SD, INIT_POS, INIT_POS_SD, LOST_TRAJECTORY_POLICY, PARTICLE_NUM, RESULT_DIR_NAME
 
     BEGIN = datetime.strptime(conf["begin"], "%Y-%m-%d %H:%M:%S")
     END = datetime.strptime(conf["end"], "%Y-%m-%d %H:%M:%S")
@@ -30,6 +30,7 @@ def _set_main_params(conf: dict[str, Any]):
     INIT_DIRECT_SD = np.float16(conf["init_direct_sd"])
     INIT_POS = np.array(conf["init_pos"], dtype=np.float16)
     INIT_POS_SD = np.float16(conf["init_pos_sd"])
+    LOST_TRAJECTORY_POLICY = np.int8(conf["lost_trajectory_policy"])
     PARTICLE_NUM = np.int16(conf["particle_num"])
     RESULT_DIR_NAME = None if conf["result_dir_name"] is None else str(conf["result_dir_name"])
 
@@ -63,6 +64,7 @@ def map_matching_with_pdr(conf: dict[str, Any]):
 
     pdr_win_len = int(pdr_param.WIN_STRIDE * pdr_param.FREQ)
     i = pdr_win_len - 1
+    lost_ts_hist = np.empty(0, dtype=datetime)
     t = BEGIN
     while t <= END:
         print("main.py:", t.time())
@@ -88,13 +90,30 @@ def map_matching_with_pdr(conf: dict[str, Any]):
 
         poses, directs = resample(particles)
 
-        if not pf_param.IS_LOST:
-            estim_pos = pf_util.estim_pos(particles)
-            map.draw_particles(estim_pos, particles)
-            map.show()
-        if pf_param.TRUTH_LOG_FILE is not None:
-            map.draw_truth_pos(truth.update_err_hist(t, estim_pos, map.resolution, pf_param.IS_LOST), True)
-            map.show()
+        if LOST_TRAJECTORY_POLICY == 1:
+            if not pf_param.IS_LOST:
+                estim_pos = pf_util.estim_pos(particles)
+                map.draw_particles(particles)
+            if pf_param.TRUTH_LOG_FILE is not None:
+                map.draw_truth_pos(truth.update_err_hist(t, estim_pos, map.resolution, pf_param.IS_LOST), True)
+
+        elif LOST_TRAJECTORY_POLICY == 2:
+            if pf_param.TRUTH_LOG_FILE is not None and pf_param.IS_LOST:
+                last_estim_pos = estim_pos
+                lost_ts_hist = np.hstack((lost_ts_hist, t))
+            elif not pf_param.IS_LOST:
+                estim_pos = pf_util.estim_pos(particles)
+                map.draw_particles(particles)
+
+                if pf_param.TRUTH_LOG_FILE is not None:
+                    lerp_num = len(lost_ts_hist)
+                    for j, lt in enumerate(lost_ts_hist):
+                        map.draw_truth_pos(truth.update_err_hist(lt, pf_util.get_lerped_pos(estim_pos, last_estim_pos, j, lerp_num), map.resolution, True), True)
+                    lost_ts_hist = np.empty(0, dtype=datetime)
+                    map.draw_truth_pos(truth.update_err_hist(t, estim_pos, map.resolution, False), True)
+
+        map.show()
+
         if pf_param.ENABLE_SAVE_VIDEO:
             map.record()
 
@@ -109,7 +128,7 @@ def map_matching_with_pdr(conf: dict[str, Any]):
         pf_util.write_conf(conf, result_dir)
     if pf_param.TRUTH_LOG_FILE is not None:
         truth.export_err()
-    map.show(0)
+    # map.show(0)
 
 if __name__ == "__main__":
     import argparse
