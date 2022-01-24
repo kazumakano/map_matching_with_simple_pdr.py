@@ -93,7 +93,7 @@ def map_matching_with_pdr(conf: dict[str, Any]):
         if LOST_TRAJECTORY_POLICY == 1:
             if not pf_param.IS_LOST:
                 estim_pos = pf_util.estim_pos(particles)
-                map.draw_particles(particles)
+                map.draw_particles(estim_pos, particles)
             if pf_param.TRUTH_LOG_FILE is not None:
                 map.draw_truth_pos(truth.update_err_hist(t, estim_pos, map.resolution, pf_param.IS_LOST), True)
 
@@ -103,7 +103,7 @@ def map_matching_with_pdr(conf: dict[str, Any]):
                 lost_ts_hist = np.hstack((lost_ts_hist, t))
             elif not pf_param.IS_LOST:
                 estim_pos = pf_util.estim_pos(particles)
-                map.draw_particles(particles)
+                map.draw_particles(estim_pos, particles)
 
                 if pf_param.TRUTH_LOG_FILE is not None:
                     lerp_num = len(lost_ts_hist)
@@ -112,7 +112,7 @@ def map_matching_with_pdr(conf: dict[str, Any]):
                     lost_ts_hist = np.empty(0, dtype=datetime)
                     map.draw_truth_pos(truth.update_err_hist(t, estim_pos, map.resolution, False), True)
 
-        map.show()
+        # map.show()
 
         if pf_param.ENABLE_SAVE_VIDEO:
             map.record()
