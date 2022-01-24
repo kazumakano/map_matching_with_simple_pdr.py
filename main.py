@@ -128,7 +128,7 @@ def map_matching_with_pdr(conf: dict[str, Any]):
         pf_util.write_conf(conf, result_dir)
     if pf_param.TRUTH_LOG_FILE is not None:
         truth.export_err()
-    # map.show(0)
+    map.show(0)
 
 if __name__ == "__main__":
     import argparse
