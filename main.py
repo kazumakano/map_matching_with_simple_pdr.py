@@ -112,7 +112,7 @@ def map_matching_with_pdr(conf: dict[str, Any]):
                     lost_ts_hist = np.empty(0, dtype=datetime)
                     map.draw_truth_pos(truth.update_err_hist(t, estim_pos, map.resolution, False), True)
 
-        # map.show()
+        map.show()
 
         if pf_param.ENABLE_SAVE_VIDEO:
             map.record()
